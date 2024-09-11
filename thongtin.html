@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Thông tin cá nhân</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+</head>
+<style>
+   .dialog-container {
+    position: fixed;
+    display: none;
+      width: 600px;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+      text-align: center;
+    }
+    
+    .dialog-container img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+    }
+    
+    .dialog-container input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .dialog-container button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+</style>
+<body>
+    <div id="tt">
+        <li id="name" onclick="profile()"></a></li>
+    </div>
+    <div id="contenttt1"></div>
+    
+    <div class="dialog-container">
+        <img id="pro" src="" alt="Profile Image">
+        <form action="/uploadphoto" enctype="multipart/form-data" method="POST"> 
+            <input type="file" name="img1" accept="img" />
+            <input type="submit" value="Upload Photo"/>
+          </form>
+        <input type="text" id="txt_ten" placeholder="Name">
+        <input type="text" id="txt_user" placeholder="Username">
+        <input type="password" id="txt_pass" placeholder="Password">
+        <input type="text" id="txt_id" placeholder="ID" disabled>
+        <button onclick="update()">Submit</button>
+      </div>
+    
+    <script>
+    //    $(document).ready(function() {
+    //     $("#name").click(function() {
+    //         $(".dialog-container").dialog({
+    //             modal: true,
+    //             buttons: {
+    //                 OK: function() {
+    //                     $(this).dialog("close");
+    //                 }
+    //             }
+    //         });
+    //     });
+            // Lấy dữ liệu từ localStorage và đưa vào input 1
+            // Lấy dữ liệu từ localStorage và đưa vào các trường input
+    var ten = localStorage.getItem("ten");
+    var id = localStorage.getItem("id");
+    var username = localStorage.getItem("username");
+    var password = localStorage.getItem("pass");
+    document.addEventListener("DOMContentLoaded", function() {
+      // Lấy tên hình ảnh từ LocalStorage
+      var imageName = localStorage.getItem("avt");
+      
+      // Tạo đường dẫn tới hình ảnh trong thư mục "img"
+      var imagePath = "img/" + imageName;
+      
+      // Gán đường dẫn hình ảnh vào thuộc tính src của thẻ <img>
+      document.getElementById("#pro").src = imagePath;
+    });
+
+    if (ten) {
+      $("#txt_ten").val(ten);
+      $("#txt_user").val(username);
+      $("#txt_pass").val(password);
+      $("#txt_id").val(id);
+    }
+        
+    </script>
+    
+    <script>
+        function update(){
+            $.post("/update", {
+                name:$("#txt_ten").val(),
+                userName: $("#txt_user").val(),
+                password: $("#txt_pass").val(),
+                id: $("#txt_id").val(),
+            }, function(data, status){
+                $.get("/getAllProduct", function(data, status) {
+                    alert("Cap Nhat Thanh Cong")
+                });
+            })
+        }
+        function innit() {
+            var user = localStorage.getItem("ten");
+            if (user == null || user == "" || user == undefined) {
+                $("#name").html("chưa đăng nhập");
+            } else {
+                $("#name").html("Xin chào: " + user);
+            }
+        }
+
+        function displayProduct(data) {
+            var products = "";
+            for (var i = 0; i < data.length; i++) {
+                products += `<div style="text-align: center; height: 370px; width: 230px; margin: 20px; margin-left: 30px; display: inline-block;">
+                    <a><img style="height: 300px; cursor: pointer; width: 250px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+                        border-radius: 5px; margin-bottom: 10px;" src="../img/${data[i].img}" /></a>
+                    <span>${data[i].name}</span><br/>
+                    <span style="color: red;">${data[i].price} vnd</span><br/>
+                    <button style="padding: 5px 10px; border-radius: 5px; cursor: pointer; border: 2px solid gray; font-weight: bold;
+                        background-color: rgb(79, 209, 107);" onclick="muaHang(${data[i].id})">Buy</button>
+                </div>`;
+            }
+            $('#contenttt1').html(products);
+        }
+
+        function muaHang(id) {
+            // Thực hiện hành động mua hàng với ID sản phẩm
+            console.log('Mua hàng với ID:', id);
+        }
+        function profile(){
+               window.location.href="/capnhat";
+           }
+        
+        $(document).ready(function() {
+            innit();
+            $.get("http://localhost:3002/getAllProduct", function(data, status) {
+                displayProduct(data);
+            });
+        });
+    </script>
+</body>
+</html>

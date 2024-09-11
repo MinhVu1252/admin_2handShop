@@ -1,0 +1,21 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+.header {
+    height: 50px;
+    background-color: red;
+}
+.body{
+    display: flex;
+}
+.select{
+    background-color: aquamarine;
+    height: 200px;
+    width: 250px;
+}
+.select_body{
+    width: 100%;
+    height: 200px;
+    background-color: aliceblue;
+}
